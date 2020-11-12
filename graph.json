@@ -1,0 +1,3 @@
+{
+    "graph" : "digraph { rankdir=LR { node [margin=0 width=0.5 shape=circle]  S0 [shape=rarrow  fontcolor=blue style=filled ]    b [fixedsize=true label=\"B\"]   d [shape=doublecircle label=\"D\"]  } S0->b a -> {a c d}  b -> {a d}  }"
+}
