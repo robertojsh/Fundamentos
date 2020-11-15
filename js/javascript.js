@@ -71,6 +71,18 @@ function addState(name) {
 }
 
 function drawGraphic(custom) {
+    // TODO:
+    //grpah = new graph(data)
+    //grammar = grammaarFromGrapgh(graph)
+    //grammar.toString()
+
+    let g = new Grammar();
+    g.addProduction('S', 'aA')
+    g.addProduction('S', 'aS')
+    g.addProduction('A', 'aA')
+    g.addProduction('A', 'a')
+
+    console.log(g.toString())
 
     if (!custom)
         custom = $("#data").val();
@@ -82,7 +94,6 @@ function drawGraphic(custom) {
 }
 
 function drawCustom(){
-
     data = templateData;
     transitions = "edge[label=\"$\"] S0->S ";
     currentEdge = "$";
