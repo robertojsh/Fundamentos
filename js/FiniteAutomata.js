@@ -20,11 +20,32 @@ class Edge {
 class FSA {
     constructor() {
       this.transitions = []; // Edges
+      this.epsilonTransitions = []; // int
     }
 
     addEdge(source, symbol, destination) {
         let edge = new Edge(source, symbol, destination);
         this.transitions.push(edge);
+
+        if (symbol === EPSILON) {
+            this.epsilonTransitions.push(this.transitions.length - 1);
+        }
+    }
+
+    replaceEpsilonTransitions() {
+        // TODO: 
+        for (let index of this.epsilonTransitions) {
+            let srcEpsEdge = this.transitions[index].src;
+            let destEpsEdge = this.transitions[index].dest;
+            for (let edge of this.transitions) {
+                //if (edge.src.name === )
+            }
+        }
+        for (let index of this.epsilonTransitions) {
+            delete this.transitions[index]
+        }
+        this.transitions = this.transitions
+            .filter(edge => edge !== undefined)
     }
 
     automataFromInputData() {
