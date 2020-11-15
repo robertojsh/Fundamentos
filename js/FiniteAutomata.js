@@ -44,6 +44,10 @@ class Grammar {
         this.rules[nonTerminal].push(production);
     }
 
+    prodHasEpsilon(nonTerminal) {
+        return this.rules[nonTerminal].includes(EPSILON);
+    }
+
     toString() {
         let grammar = "";
         for (let key in this.rules) {
@@ -67,7 +71,13 @@ class GrammarAutomataConverter {
     grammarFromAutomata(fsa) {
         let grammar = new Grammar();
 
-
+        for (let edge of fsa.transitions) {
+            let production = edge.symbol + edge.dest.name;
+            grammar.addProduction(edge.src.name, production);
+            if (edge.src.isTerminal && !grammar.prodHasEpsilon(edge.src.name)) {
+                grammar.addProduction(edge.src.name, EPSILON);
+            }
+        }
 
         return grammar;
     }

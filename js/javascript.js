@@ -73,16 +73,20 @@ function addState(name) {
 function drawGraphic(custom) {
     // TODO:
     //grpah = new graph(data)
-    //grammar = grammaarFromGrapgh(graph)
-    //grammar.toString()
+    let S = new State('S', true);
+    let A = new State('A', false);
+    let B = new State('B', false);
 
-    let g = new Grammar();
-    g.addProduction('S', 'aA')
-    g.addProduction('S', 'aS')
-    g.addProduction('A', 'aA')
-    g.addProduction('A', 'a')
+    let fsa = new FSA();
+    fsa.addEdge(S, 'a', S);
+    fsa.addEdge(S, 'a', A);
+    fsa.addEdge(S, 'b', B);
+    fsa.addEdge(A, 'a', A);
+    fsa.addEdge(B, 'b', B);
 
-    console.log(g.toString())
+    let converter = new GrammarAutomataConverter();
+    let grammar = converter.grammarFromAutomata(fsa);
+    console.log(grammar.toString())
 
     if (!custom)
         custom = $("#data").val();
