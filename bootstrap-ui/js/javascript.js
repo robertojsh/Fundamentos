@@ -1,61 +1,11 @@
-$(document).ready(function () {
+// $(document).ready(function () {
+//     // Read dot graph from service
+//     $.getJSON("./graph.json", function (data) {
+//         $("#data").val(data.graph);
+//         drawGraphic();
+//     });
+// });
 
-    // Read dot graph from service
-    $.getJSON("./graph.json", function (data) {
-
-        $("#data").val(data.graph);
-
-        drawGraphic();
-
-
-
-    });
-
-
-});
-
-function processAllRules() {
-    emptyAutomata.trs = [];
-    var arrayOfLines = $('#grammar').val().split('\n');
-    $.each(arrayOfLines, function (index, item) {
-        processRule(item)
-    });
-
-}
-
-function processRule(rule) {
-    console.log(rule);
-    rule = (""+rule).trim();
-    cmps = rule.split("=>");
-
-    initialState = cmps[0]
-    ind = cmps[1].split("|")
-    $.each(ind,function(i,item){
-        console.log(item);
-        console.log(item[0]);
-        console.log(item[1]);
-
-        //if(emptyAutomata.trs.length > 0){
-            currentTrsGroup = emptyAutomata.trs.find(e=> e && e.edge == item[0]);
-            if(!currentTrsGroup){
-                newOne = { "edge" : item[0] , "val" : initialState + "->" + item[1] };
-                emptyAutomata.trs.push(newOne);
-            }else{
-                currentTrsGroup.val += " " +  initialState + "->" + item[1]
-            }
-        /*}else{
-            newOne = { "edge" : item[0] , "val" : initialState + "->" + item[1] };
-            emptyAutomata.trs.push(newOne);
-        }*/
-
-        
-    });
-
-    console.log(JSON.stringify(emptyAutomata));
-
- 
-
-}
 var emptyAutomata = {
     "sts": [
         { "name" : "a"}
@@ -66,9 +16,78 @@ var emptyAutomata = {
     }*/]
 }
 
-function addState(name) {
-    emptyAutomata.sts.push({ "name": name });
+const STATE_Z = "Z";
+const EPSILON = "$";
+
+
+function processAllRules() {
+    finalStates = "";
+    emptyAutomata.trs = [];
+    var arrayOfLines = $('#grammar').val().split('\n');
+    $.each(arrayOfLines, function (index, item) {
+        if (item.length > 0) {
+            processRule(item)
+        }
+    });
 }
+
+function processRule(rule) {
+    console.log(rule);
+    rule = ("" + rule).trim();
+    cmps = rule.split("=>");
+
+    
+    initialState = cmps[0]
+    ind = cmps[1].split("|")    
+    $.each(ind, function (i, item) {
+
+        console.log(">" + item);
+
+        if (item.length == 1) {
+
+            if (item == EPSILON) {
+                finalStates += initialState + ",";
+            } else {
+                finalStates += STATE_Z + ",";
+                currentTrsGroup = emptyAutomata.trs.find(e => e && e.edge == item);
+                if (!currentTrsGroup) {
+                    newOne = { "edge": item[0], "val": initialState + "->" + STATE_Z };
+                    emptyAutomata.trs.push(newOne);
+                } else {
+                    currentTrsGroup.val += " " + initialState + "->" + STATE_Z
+                }
+            }
+
+            
+        } if (item.length == 2) {
+            
+            //console.log(item[0]);
+            //console.log(item[1]);
+
+            //if(emptyAutomata.trs.length > 0){
+            currentTrsGroup = emptyAutomata.trs.find(e => e && e.edge == item[0]);
+            if (!currentTrsGroup) {
+                newOne = { "edge": item[0], "val": initialState + "->" + item[1] };
+                emptyAutomata.trs.push(newOne);
+            } else {
+                currentTrsGroup.val += " " + initialState + "->" + item[1]
+            }
+            /*}else{
+                newOne = { "edge" : item[0] , "val" : initialState + "->" + item[1] };
+                emptyAutomata.trs.push(newOne);
+            }*/
+
+        }
+    });
+
+    console.log(JSON.stringify(emptyAutomata));
+}
+
+
+
+// function addState(name) {
+//     emptyAutomata.sts.push({ "name": name });
+// }
 
 function drawGraphic(custom) {
 
@@ -93,10 +112,20 @@ function drawCustom(){
         transitions += item.val + " ";
     });
 
-    console.log(transitions);
+    // final states
+    let sizeFS = finalStates.length;
+    if (finalStates.length > 0) {
+        if (finalStates[sizeFS-1] == ",") {
+            finalStates = finalStates.slice(0,-1) + " [shape=doublecircle]";
+            data = data.replace("$$finalStates", finalStates);
+            console.log(finalStates);
+        }
+    }
 
-    drawGraphic(data.replace("$$transitions",transitions));
+    data = data.replace("$$transitions", transitions);    
+    console.log(data);
+    drawGraphic(data);
 }
 
 
-var templateData =  "digraph { rankdir=LR {node [margin=0 width=0.5 shape=circle]  S0 [shape=rarrow  fontcolor=blue style=filled ] } $$transitions }";
+var templateData =  "digraph { rankdir=LR {node [margin=0 width=0.5 shape=circle] $$finalStates S0 [shape=rarrow  fontcolor=blue style=filled ] } $$transitions }";
