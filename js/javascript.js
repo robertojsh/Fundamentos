@@ -75,8 +75,8 @@ function drawGraphic(custom) {
     //grpah = new graph(data)
 
     let fsa = new FSA();
-    fsa.terminalSymbols.push('S');
-    fsa.terminalSymbols.push('A');
+    fsa.terminalStates.push('S');
+    fsa.terminalStates.push('A');
     fsa.addEdge('S', 'a', 'S');
     fsa.addEdge('S', 'a', 'A');
     fsa.addEdge('S', 'b', 'B');

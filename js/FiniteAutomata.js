@@ -15,7 +15,7 @@ class FSA {
     constructor() {
       this.transitions = []; // Edges
       this.epsilonTransitions = []; // int
-      this.terminalSymbols = []; // chars
+      this.terminalStates = []; // chars
       this.startSymbol = START;
     }
 
@@ -29,7 +29,7 @@ class FSA {
     }
 
     hasTerminal(state) {
-        return this.terminalSymbols.includes(state);
+        return this.terminalStates.includes(state);
     }
 
     replaceEpsilonTransitions() {
@@ -80,8 +80,30 @@ class Grammar {
         return grammar;
     }
 
+    isTerminalSymbol(symbol) {
+        return symbol === symbol.toLowerCase() && symbol.lenght === 1;
+    }
+
     isRegularGrammar() {
-        // TODO:
+        for (let key in this.rules) {
+            if (this.isTerminalSymbol(key)) {
+                return false;
+            }
+            for (let prod of this.rules[key]) {
+                if (prod.lenght > 2) {
+                    return false;
+                } else if (prod.lenght === 1 && !this.isTerminalSymbol(prod)) {
+                    return false;
+                } else {
+                    let symbol = prod.charAt(0);
+                    let destination = prod.charAt(1);
+                    if (!this.isTerminalSymbol(symbol) && this.isTerminalSymbol(destination)) {
+                        return false;
+                    }
+                }
+            }
+        }
+
         return true;
     }
 }
@@ -107,9 +129,9 @@ class GrammarAutomataConverter {
         let fsa = new FSA();
         for (let key in grammar.rules) {
             for (let prod of grammar.rules[key]) {
-                if (prod.length === 1) {
+                if (prod.lenght === 1) {
                     if (prod === EPSILON) {
-                        fsa.terminalSymbols.push(key);
+                        fsa.terminalStates.push(key);
                     } else {
                         fsa.addEdge(key, prod, Z_STATE);
                     }
@@ -131,7 +153,7 @@ class GrammarAutomataConverter {
             );
         }
         
-        for (let state of fsa.terminalSymbols) {
+        for (let state of fsa.terminalStates) {
             dotgraph = dotgraph.concat(state, '[shape="doublecircle"];\n');
         }
 
