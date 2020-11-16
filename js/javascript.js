@@ -86,7 +86,12 @@ function drawGraphic(custom) {
     let converter = new GrammarAutomataConverter();
     let grammar = converter.grammarFromAutomata(fsa);
     console.log(grammar.toString())
+
+    let fsa2 = converter.automataFromGrammar(grammar);
     console.log(converter.dotgraphFromAutomata(fsa));
+    console.log(converter.dotgraphFromAutomata(fsa2));
+    let grammar2 = converter.grammarFromAutomata(fsa2);
+    console.log(grammar2.toString())
 
     if (!custom)
         custom = $("#data").val();

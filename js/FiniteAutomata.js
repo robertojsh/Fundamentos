@@ -1,6 +1,7 @@
 const EPSILON = '$';
 const START = 'S';
 const PRODUCES = ' => ';
+const Z_STATE = 'Z';
 
 class Edge {
     constructor(source, symbol, destination) {
@@ -104,7 +105,21 @@ class GrammarAutomataConverter {
 
     automataFromGrammar(grammar) {
         let fsa = new FSA();
-        // TODO:
+        for (let key in grammar.rules) {
+            for (let prod of grammar.rules[key]) {
+                if (prod.length === 1) {
+                    if (prod === EPSILON) {
+                        fsa.terminalSymbols.push(key);
+                    } else {
+                        fsa.addEdge(key, prod, Z_STATE);
+                    }
+                } else {
+                    let symbol = prod.charAt(0);
+                    let destination = prod.charAt(1);
+                    fsa.addEdge(key, symbol, destination)
+                }
+            }
+        }
         return fsa;
     }
 
