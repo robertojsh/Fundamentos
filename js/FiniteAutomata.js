@@ -1,19 +1,12 @@
 const EPSILON = '$';
-const INITIAL = 'S';
+const START = 'S';
 const PRODUCES = ' => ';
-
-class State {
-    constructor(name, isTerminal) {
-        this.name = name; // char
-        this.isTerminal = isTerminal; // bool
-    }
-}
 
 class Edge {
     constructor(source, symbol, destination) {
-        this.src = source; // State
+        this.src = source; // char
         this.symbol = symbol; // char
-        this.dest = destination; // State
+        this.dest = destination; // char
     }
 }
 
@@ -21,6 +14,8 @@ class FSA {
     constructor() {
       this.transitions = []; // Edges
       this.epsilonTransitions = []; // int
+      this.terminalSymbols = []; // chars
+      this.startSymbol = START;
     }
 
     addEdge(source, symbol, destination) {
@@ -30,6 +25,10 @@ class FSA {
         if (symbol === EPSILON) {
             this.epsilonTransitions.push(this.transitions.length - 1);
         }
+    }
+
+    hasTerminal(state) {
+        return this.terminalSymbols.includes(state);
     }
 
     replaceEpsilonTransitions() {
@@ -93,10 +92,10 @@ class GrammarAutomataConverter {
         let grammar = new Grammar();
 
         for (let edge of fsa.transitions) {
-            let production = edge.symbol + edge.dest.name;
-            grammar.addProduction(edge.src.name, production);
-            if (edge.src.isTerminal && !grammar.prodHasEpsilon(edge.src.name)) {
-                grammar.addProduction(edge.src.name, EPSILON);
+            let production = edge.symbol + edge.dest;
+            grammar.addProduction(edge.src, production);
+            if (fsa.hasTerminal(edge.src) && !grammar.prodHasEpsilon(edge.src)) {
+                grammar.addProduction(edge.src, EPSILON);
             }
         }
 
@@ -110,8 +109,20 @@ class GrammarAutomataConverter {
     }
 
     dotgraphFromAutomata(fsa) {
-        let dotgraph = 'digraph{'
-        // TODO:
+        let dotgraph = 'digraph{\n'
+        for (let edge of fsa.transitions) {
+            dotgraph = dotgraph.concat(
+                edge.src,'->',edge.dest,'[label="', edge.symbol, '"];\n'
+            );
+        }
+        
+        for (let state of fsa.terminalSymbols) {
+            dotgraph = dotgraph.concat(state, '[shape="doublecircle"];\n');
+        }
+
+        dotgraph = dotgraph.concat('qi->', fsa.startSymbol, '\n');
+        dotgraph = dotgraph.concat('qi[shape="point"];\n');
+
         return dotgraph + '}'
     }
 }
