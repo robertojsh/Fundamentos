@@ -99,6 +99,27 @@ function addState(name) {
 }
 
 function drawGraphic(custom) {
+    // TODO:
+    //grpah = new graph(data)
+
+    let fsa = new FSA();
+    fsa.terminalStates.push('S');
+    fsa.terminalStates.push('A');
+    fsa.addEdge('S', 'a', 'S');
+    fsa.addEdge('S', 'a', 'A');
+    fsa.addEdge('S', 'b', 'B');
+    fsa.addEdge('A', 'a', 'A');
+    fsa.addEdge('B', 'b', 'B');
+
+    let converter = new GrammarAutomataConverter();
+    let grammar = converter.grammarFromAutomata(fsa);
+    console.log(grammar.toString())
+
+    let fsa2 = converter.automataFromGrammar(grammar);
+    console.log(converter.dotgraphFromAutomata(fsa));
+    console.log(converter.dotgraphFromAutomata(fsa2));
+    let grammar2 = converter.grammarFromAutomata(fsa2);
+    console.log(grammar2.toString())
 
     if (!custom)
         custom = $("#data").val();
@@ -110,7 +131,6 @@ function drawGraphic(custom) {
 }
 
 function drawCustom(){
-
     data = templateData;
     transitions = "edge[label=\"$\"] S0->S ";
     currentEdge = "$";
