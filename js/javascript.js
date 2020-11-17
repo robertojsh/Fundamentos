@@ -14,6 +14,9 @@ $(document).ready(function () {
 
 });
 
+
+
+
 function processAllRules() {
     emptyAutomata.trs = [];
     var arrayOfLines = $('#grammar').val().split('\n');
@@ -31,9 +34,22 @@ function processRule(rule) {
     initialState = cmps[0]
     ind = cmps[1].split("|")
     $.each(ind,function(i,item){
-        console.log(item);
-        console.log(item[0]);
+        console.log(item);//aA
+        console.log(item[0]);//a -> T   //$
         console.log(item[1]);
+
+
+        //length == 0 (terminal or epsilon)  > 1 (both terminal + var "aA")
+        //aA case sensitive
+        //mark down rules that aren't valid/passing
+
+        //gramatica -> automata
+
+        //automata -> gramatica
+        //a A->B   A=>aB|aC
+        //a A->C  
+        //$ A->F
+ 
 
         //if(emptyAutomata.trs.length > 0){
             currentTrsGroup = emptyAutomata.trs.find(e=> e && e.edge == item[0]);
@@ -56,15 +72,27 @@ function processRule(rule) {
  
 
 }
+
 var emptyAutomata = {
     "sts": [
-        { "name" : "a"}
+        {}
     ],
     "trs" : [/*{
         edge : "",
         val : ""
     }*/]
 }
+
+var a = new node();
+a.s = "a";
+
+
+var node = {
+    s,
+    stateA,
+    stateB,
+}
+
 
 function addState(name) {
     emptyAutomata.sts.push({ "name": name });
@@ -99,4 +127,4 @@ function drawCustom(){
 }
 
 
-var templateData =  "digraph { rankdir=LR {node [margin=0 width=0.5 shape=circle]  S0 [shape=rarrow  fontcolor=blue style=filled ] } $$transitions }";
+var templateData =  "digraph { rankdir=LR {node [margin=0 width=0.5 shape=circle]  S0 [shape=rarrow  fontcolor=blue style=filled ]  } $$transitions }";
