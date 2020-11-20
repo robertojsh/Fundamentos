@@ -105,17 +105,52 @@
                 <h2 class="mb-5">Convertir Autómata Finito a Gramática Regular</h2>
 
                 <div class="d-flex flex-row">
-                    <div class="p-2" style="width: 25%; text-align: center;">
-                        Automata (tabla de transiciones)
+                    <div style="width: 30%;">
+                        <h4>Automata</h4>
+                        <form>
+                            <div class="form-group">
+                                <label for="iLanguage">Lenguaje</label>
+                                <input type="text" class="form-control" id="iLanguage" placeholder="Ej: a,b,c">
+                            </div>
+                            <div class="form-group">
+                                <label for="iStates">Estados </label>
+                                <input type="text" class="form-control" id="iStates" placeholder="Ej: A,B,C">
+                            </div>
+                            <div class="form-row">
+                            <div class="col">
+                                <label for="iStates">Estado Inicial </label>
+                                <input type="text" class="form-control" id="iStates" >
+                            </div>
+                            <div class="col">
+                                <label for="iStates">Estados de Aceptacion </label>
+                                <input type="text" class="form-control" id="iStates" >
+                            </div>
+                        </div>
+                        </form>
+                    <hr/>
+                        <label for="iTransiciones">Table de Transiciones</label>
+                        <div id="tableContainer"></div>
                     </div>
-                    <div class="p-2" style="width: 65%; text-align: center;">
-                        Gramatica regular
+                    <div style="width: 70%; margin-left: 10%;">
+                        Gramática Regular
                     </div>
                 </div>
-
             </div>
         </section>
     </div>
+<script type="text/html" id="templateTT">
+    <table class="table table-striped" id="transitionTable">
+        <thead>
+        $t-head
+        </thead>
+        <tbody>
+        $t-body
+        </tbody>
+    </table>
+</script>
+
+
+
     <!-- Bootstrap core JS-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -127,6 +162,7 @@
     <!--Custom JS-->
     <script src="js/d3.js"></script>
     <script src="js/javascript.js"></script>
+    <script src="js/readAutomata.js"></script>
     <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
     <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
 </body>
