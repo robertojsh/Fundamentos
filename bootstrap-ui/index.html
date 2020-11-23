@@ -81,22 +81,25 @@
                 <div class="d-flex flex-row">
                     <div class="p-2" style="width: 25%; text-align: center;">
                         <div>
+                            <h4>Gramática</h4>
                             <textarea class="form-control" id="grammar" rows="6">S=>aA</textarea>
                         </div>
                         <div style="margin-top: 20px;">
-                            <!-- <button class="btn btn-primary" onclick="javascript:processAllRules()">Process Rules</button> -->
-                            <!-- <button class="btn btn-success" onclick="javascript:drawCustom()">Draw Automata</button> -->
-                            <button class="btn btn-success" onclick="javascript:action1()">Draw Automata</button>
+                            <button class="btn btn-success" onclick="javascript:grammar2Automata()">Crear Autómata</button>
                         </div>
 
                     </div>
                     <div class="p-2" style="width: 65%; text-align: center;">
+                        <h4>Autómata</h4>
                         <div id="graphCanvas_1" style="text-align: center; width: 100%;"></div>
                     </div>
                 </div>
             </div>
         </section>
+        
+        
         <hr class="m-0" />
+
         <!-- Parte II-->
         <section class="resume-section" id="partII">
             <div class="resume-section-content" style="min-height: 90vh;">
@@ -133,14 +136,14 @@
                         <button id="draw-automata" 
                             class="btn btn-success" 
                             style="display: none;"
-                            onclick="javascript:action2()"> Crear Automata</button>
+                            onclick="javascript:automata2Grammar()"> Crear Automata</button>
                     </div>
                     <div style="width: 100%; padding: 10px; text-align: center; position: relative;">
                         <div style="">
                         <h3>Gramatica</h3>
                         <textarea id="grammar_2" class="form-control" rows="5" disabled style="font-size: 1.2em; text-align: center; "></textarea>
                         </div>
-                        <div style="height: 60%;">
+                        <div style="height: 60%; margin-top: 5%;">
                             <h3>Automata</h3>
                             <div id="graphCanvas_2" ></div>
                         </div>                                                
@@ -173,7 +176,6 @@
     <!--Custom JS-->
     <script src="js/d3.js"></script>
     <script src="js/FiniteAutomata.js"></script>
-    <!-- <script src="js/readAutomata.js"></script> -->
     <script src="js/main.js"></script>
     <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
     <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>

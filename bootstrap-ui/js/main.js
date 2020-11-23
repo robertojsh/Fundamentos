@@ -1,6 +1,4 @@
 $(document).ready(function () {
-    let template = ""
-
     $("#iLanguage").change(function (value) {
         createTT();
     });
@@ -11,14 +9,12 @@ $(document).ready(function () {
 });
 
 
-
 const CANVAS_1 = "#graphCanvas_1";
 const CANVAS_2 = "#graphCanvas_2"
 
-function action1() {
+function grammar2Automata() {
 
     let rules = $('#grammar').val().split('\n');
-
     let fsa = new FSA();
 
     rules.forEach(rule => {
@@ -30,31 +26,7 @@ function action1() {
     drawGraph(graph, CANVAS_1);
 }
 
-function processRule(fsa, rule) {
-    // Split rule in 2 parts
-    // rule[0] = 
-    // rule[1] = aA | bB | $
-    rule = rule.split(PRODUCES.trim());
-
-    // alpha: variable
-    let src = rule[0];
-
-    // beta = aA | b | $
-    //  aA : simbolo terminal seguido de una variable
-    //   b : simbolo terminal
-    //   $ : palabra vacia
-    let part = rule[1].split(RULE_SEPARATOR); 
-
-    part.forEach(element => {
-        let symbol = element[0];
-        let dest = element[1];
-        fsa.addEdge(src, symbol, dest);    
-    });
-    return fsa;
-}
-
-
-function action2() {
+function automata2Grammar() {
 
     // read values from UI
     let transitions = $(".transitions");
@@ -81,6 +53,29 @@ function action2() {
     drawGrammar(grammar.toString());
 }
 
+function processRule(fsa, rule) {
+    // Split rule in 2 parts
+    // rule[0] = 
+    // rule[1] = aA | bB | $
+    rule = rule.split(PRODUCES.trim());
+
+    // alpha: variable
+    let src = rule[0];
+
+    // beta = aA | b | $
+    //  aA : simbolo terminal seguido de una variable
+    //   b : simbolo terminal
+    //   $ : palabra vacia
+    let part = rule[1].split(RULE_SEPARATOR); 
+
+    part.forEach(element => {
+        let symbol = element[0];
+        let dest = element[1];
+        fsa.addEdge(src, symbol, dest);    
+    });
+    return fsa;
+}
+
 function addAcceptanceStates(fsa, acceptanceStates) {
     let states = acceptanceStates.split(SEPARATOR);
     states.forEach(state => {
@@ -102,9 +97,7 @@ function addTransitions(fsa, transitions) {
 }
 
 function drawGraph(graph, canvas) {
-    d3.select(canvas)
-        .graphviz()
-        .renderDot(graph);
+    d3.select(canvas).graphviz().renderDot(graph);
 }
 
 function drawGrammar(grammar) {
@@ -112,13 +105,11 @@ function drawGrammar(grammar) {
 }
 
 
-
 function createTT() {
 
     // read inputs from UI
     let inputLanguage = $("#iLanguage").val().trim();
     let inputStates = $("#iStates").val().trim();
-
 
     if (isValidInput(inputLanguage) && isValidInput(inputStates)) {
 
