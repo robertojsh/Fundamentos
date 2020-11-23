@@ -36,6 +36,7 @@ $(document).ready(function () {
 
             // draw table to UI
             $("#tableContainer").html(template);
+            $("#draw-automata").show();
 
         } else {
             alert("verify yout inputs");
@@ -59,7 +60,7 @@ $(document).ready(function () {
         states.forEach(state => {
             body += "<tr><th scope='row'>" + state + "</th>";
             language.forEach(symbol => {
-                body += "<td>" + "*" + "</td>";
+                body += "<td>" + "<input type='text' width='70px' class='transitions form-control' data-src='" + state + "'" + "data-symbol='" + symbol + "'/>" + "</td>";
             });
             body += ("</tr>")   
         });        
