@@ -2,6 +2,8 @@ const EPSILON = '$';
 const START = 'S';
 const PRODUCES = ' => ';
 const Z_STATE = 'Z';
+const SEPARATOR = ",";
+const RULE_SEPARATOR = "|"
 
 class Edge {
     constructor(source, symbol, destination) {
@@ -73,7 +75,7 @@ class Grammar {
         let grammar = "";
         for (let key in this.rules) {
             grammar = grammar.concat(
-                key, PRODUCES, this.rules[key].join('|'), '\n'
+                key, PRODUCES, this.rules[key].join(RULE_SEPARATOR), '\n'
             );
         }
 

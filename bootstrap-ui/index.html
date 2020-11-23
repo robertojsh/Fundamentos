@@ -80,15 +80,13 @@
                 <h2 class="mb-5">Convertir Gramática Regular a Autómata Finito</h2>
                 <div class="d-flex flex-row">
                     <div class="p-2" style="width: 25%; text-align: center;">
-                        <!-- <div><textarea id="data"></textarea></div> -->
-                        <!-- <div><button onclick="javascript:drawGraphic()">Draw Me!</button></div> -->
                         <div>
                             <textarea class="form-control" id="grammar" rows="6">S=>aA</textarea>
                         </div>
                         <div style="margin-top: 20px;">
-                            <button class="btn btn-primary" onclick="javascript:processAllRules()">Process
-                                Rules</button>
-                            <button class="btn btn-success" onclick="javascript:drawCustom()">Draw Automata</button>
+                            <!-- <button class="btn btn-primary" onclick="javascript:processAllRules()">Process Rules</button> -->
+                            <!-- <button class="btn btn-success" onclick="javascript:drawCustom()">Draw Automata</button> -->
+                            <button class="btn btn-success" onclick="javascript:action1()">Draw Automata</button>
                         </div>
 
                     </div>
@@ -175,8 +173,8 @@
     <!--Custom JS-->
     <script src="js/d3.js"></script>
     <script src="js/FiniteAutomata.js"></script>
-    <script src="js/readAutomata.js"></script>
-    <script src="js/javascript.js"></script>
+    <!-- <script src="js/readAutomata.js"></script> -->
+    <script src="js/main.js"></script>
     <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
     <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
 </body>

@@ -1,14 +1,60 @@
+$(document).ready(function () {
+    let template = ""
 
-SEPARATOR = ",";
+    $("#iLanguage").change(function (value) {
+        createTT();
+    });
+
+    $("#iStates").change(function (value) {
+        createTT();
+    });    
+});
+
+
+
+const CANVAS_1 = "#graphCanvas_1";
+const CANVAS_2 = "#graphCanvas_2"
+
+function action1() {
+
+    let rules = $('#grammar').val().split('\n');
+
+    let fsa = new FSA();
+
+    rules.forEach(rule => {
+        fsa = processRule(fsa, rule.trim())
+    });
+
+    let converter = new GrammarAutomataConverter();
+    let graph = converter.dotgraphFromAutomata(fsa)
+    drawGraph(graph, CANVAS_1);
+}
+
+function processRule(fsa, rule) {
+    // Split rule in 2 parts
+    // rule[0] = 
+    // rule[1] = aA | bB | $
+    rule = rule.split(PRODUCES.trim());
+
+    // alpha: variable
+    let src = rule[0];
+
+    // beta = aA | b | $
+    //  aA : simbolo terminal seguido de una variable
+    //   b : simbolo terminal
+    //   $ : palabra vacia
+    let part = rule[1].split(RULE_SEPARATOR); 
+
+    part.forEach(element => {
+        let symbol = element[0];
+        let dest = element[1];
+        fsa.addEdge(src, symbol, dest);    
+    });
+    return fsa;
+}
 
 
 function action2() {
-
-    // language
-    // states
-    // initial state
-
-    //let initialState = $("#initialState").val()
 
     // read values from UI
     let transitions = $(".transitions");
@@ -31,7 +77,7 @@ function action2() {
     // 5. get Grammar (convert fsa objet to grammar rules)
     let grammar = converter.grammarFromAutomata(fsa);
         
-    drawGraph(graph);
+    drawGraph(graph, CANVAS_2);
     drawGrammar(grammar.toString());
 }
 
@@ -55,14 +101,73 @@ function addTransitions(fsa, transitions) {
     return fsa;
 }
 
-function drawGraph(graph) {
-    d3.select("#graphCanvas_2")
+function drawGraph(graph, canvas) {
+    d3.select(canvas)
         .graphviz()
         .renderDot(graph);
 }
 
 function drawGrammar(grammar) {
     $("#grammar_2").html(grammar);
+}
+
+
+
+function createTT() {
+
+    // read inputs from UI
+    let inputLanguage = $("#iLanguage").val().trim();
+    let inputStates = $("#iStates").val().trim();
+
+
+    if (isValidInput(inputLanguage) && isValidInput(inputStates)) {
+
+        // split input
+        let language = inputLanguage.split(",");
+        let states = inputStates.split(",");
+        
+        // create table content
+        let header = createTableHeader(language);
+        let body = createTableBody(language, states);
+        
+        // read template
+        let template = $("#templateTT").html().trim();
+        
+        // replace markers 
+        template = template.replace("$t-head", header);
+        template = template.replace("$t-body", body);    
+
+        // draw table to UI
+        $("#tableContainer").html(template);
+        $("#draw-automata").show();
+
+    } else {
+        alert("verify yout inputs");
+    }
+}
+
+function isValidInput(input) {
+    return (input.length > 0 && input.charAt(0) != "," && input.charAt(input.length - 1) != ",")
+}
+
+function createTableHeader(language) {
+    let header = "<tr><th scope='col'>@</th>"
+    language.forEach(symbol => {
+        header += "<th scope='col'>" + symbol + "</th>";
+    });
+    return header + ("</tr>");
+}
+
+function createTableBody(language, states) {        
+    let body = "";
+    states.forEach(state => {
+        body += "<tr><th scope='row'>" + state + "</th>";
+        language.forEach(symbol => {
+            body += "<td>" + "<input type='text' width='70px' class='transitions form-control' data-src='" + state + "'" + "data-symbol='" + symbol + "'/>" + "</td>";
+        });
+        body += ("</tr>")   
+    });        
+    return body;
 }
 
 
