@@ -30,7 +30,7 @@
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
                 class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav" style="font-size: 1.3em;">
                 <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#inicio">Inicio</a></li>
                 <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#partI">Parte I</a></li>
                 <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#partII">Parte II</a></li>
@@ -106,47 +106,49 @@
                 <h2 class="mb-5">Convertir Autómata Finito a Gramática Regular</h2>
 
                 <div class="d-flex flex-row">
-                    <div style="width: 60%; padding: 10px; position: relative;">
-                        <h4>Automata</h4>
+                    <div style="width: 60%; padding: 15px; position: relative;">
+                        <h4>Autómata</h4>
                         <form>
                             <div class="form-group">
                                 <label for="iLanguage">Lenguaje</label>
-                                <input type="text" class="form-control" id="iLanguage" placeholder="Ej: a,b,c">
+                                <input type="text" class="form-control" id="iLanguage" placeholder="Ej: 0,1">
                             </div>
                             <div class="form-group">
                                 <label for="iStates">Estados </label>
                                 <input type="text" class="form-control" id="iStates" placeholder="Ej: A,B,C">
                             </div>
-                            <div class="form-row">
+                            <div class="form-group form-row">
                                 <div class="col">
                                     <label for="initialState">Estado Inicial </label>
                                     <input type="text" class="form-control" id="initialState">
-                                </div>
+                                </div>                                
                                 <div class="col">
-                                    <label for="acceptanceStates">Estados de Aceptacion </label>
+                                    <label for="acceptanceStates">Estados de Aceptación </label>
                                     <input type="text" class="form-control" id="acceptanceStates">
                                 </div>
-                            </div>
+                            </div> 
+                            <div class="form-group">
+                            <input type="button" class=" btn btn-primary"
+                            onclick="javascript:createTT()" value="Tabla de Transiciones" />
+                        </div>                           
                         </form>
-                        <hr />
-                        <label for="iTransiciones">Table de Transiciones</label>
-                        <div id="tableContainer">
-
-                        </div>
+                        <!-- <hr /> -->
+                        <div id="tableContainer"></div>
                         <button id="draw-automata" 
                             class="btn btn-success" 
                             style="display: none;"
                             onclick="javascript:automata2Grammar()"> Crear Automata</button>
                     </div>
-                    <div style="width: 100%; padding: 10px; text-align: center; position: relative;">
+                    <div style="width: 100%; padding: 15px; text-align: center; position: relative;">
                         <div style="">
-                        <h3>Gramatica</h3>
-                        <textarea id="grammar_2" class="form-control" rows="5" disabled style="font-size: 1.2em; text-align: center; "></textarea>
+                            <h3>Gramática</h3>
+                            <textarea id="grammar_2" class="form-control" rows="5" disabled
+                                style="font-size: 1.2em; text-align: center; "></textarea>
                         </div>
                         <div style="height: 60%; margin-top: 5%;">
-                            <h3>Automata</h3>
-                            <div id="graphCanvas_2" ></div>
-                        </div>                                                
+                            <h3>Autómata</h3>
+                            <div id="graphCanvas_2"></div>
+                        </div>
                     </div>
                 </div>
             </div>

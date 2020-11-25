@@ -1,9 +1,9 @@
 const EPSILON = '$';
-const START = 'S';
+//const START = 'S';
 const PRODUCES = ' => ';
 const Z_STATE = 'Z';
 const SEPARATOR = ",";
-const RULE_SEPARATOR = "|"
+const RULE_SEPARATOR = " | "
 
 class Edge {
     constructor(source, symbol, destination) {
@@ -18,7 +18,11 @@ class FSA {
       this.transitions = []; // Edges
       this.epsilonTransitions = []; // int
       this.terminalStates = []; // chars
-      this.startSymbol = START;
+      this.startSymbol = "";
+    }
+
+    addInitalState(initialState) {
+        this.startSymbol = initialState;
     }
 
     addEdge(source, symbol, destination) {
