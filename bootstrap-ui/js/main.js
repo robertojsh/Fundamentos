@@ -26,26 +26,23 @@ function automata2Grammar() {
     
     let fsa = new FSA();
 
-    // 1. Add initial state
-    fsa.addInitalState(initialState);
-
-
-    // 2. Add Acceptance States
+    // 1. Add Acceptance States
     fsa = addAcceptanceStates(fsa, acceptanceStates);
 
-    // 3. Add Transitions
+    // 2. Add Transitions
     fsa = addTransitions(fsa, transitions);
 
-    // 4. Instantiate Grammar Converter
+    // 3. Instantiate Grammar Converter
     let converter = new GrammarAutomataConverter();
 
-    // 5. get Graph (convert fsa objet to dot graph)
+    // 4. get Graph (convert fsa objet to dot graph)
     let graph = converter.dotgraphFromAutomata(fsa);
 
-    // 6. get Grammar (convert fsa objet to grammar rules)
+    // 5. get Grammar (convert fsa objet to grammar rules)
     let grammar = converter.grammarFromAutomata(fsa);
     
     let simplifiedFSA = converter.automataFromGrammar(grammar);
+    simplifiedFSA.addInitalState(initialState);
     let simplifiedGrammar = converter.dotgraphFromAutomata(simplifiedFSA);
     
         
@@ -61,12 +58,14 @@ function processRule(fsa, rule) {
 
     // alpha: variable
     let src = rule[0];
+    if(fsa.startSymbol === "")
+        fsa.addInitalState(src);
 
     // beta = aA | b | $
     //  aA : simbolo terminal seguido de una variable
     //   b : simbolo terminal
     //   $ : palabra vacia
-    let part = rule[1].split(RULE_SEPARATOR); 
+    let part = rule[1].split(RULE_SEPARATOR.trim()); 
 
     part.forEach(element => {
         let symbol = element[0];

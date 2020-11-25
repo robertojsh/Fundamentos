@@ -25,31 +25,24 @@ class FSA {
         this.startSymbol = initialState;
     }
 
-
-    setInitialState(value){
-        this.startSymbol = value;
-    }
-
     getTransitionsBySrc(src){
         return this.transitions.filter(x => x.src == src);
     }
 
     addEdge(source, symbol, destination) {
 
-
+        console.log(destination)
         //entonces es epsilon o simbolo terminal
         if (!destination) {
-            if (symbol == EPSILON)
+            if (symbol == EPSILON){
                 this.terminalStates.push(source);
-            else {
+            }else {
                 this.addEdgeInternal(source, symbol, Z_STATE);
                 this.terminalStates.push(Z_STATE);
             }
 
         } else
             this.addEdgeInternal(source, symbol, destination);
-
-
 
         if (symbol === EPSILON) {
             this.epsilonTransitions.push(this.transitions.length - 1);
