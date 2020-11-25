@@ -1,19 +1,32 @@
+/* ------------------------------------------------------------
+    FUNDAMENTOS DE LA COMPUTACION
+    PROYECTO FINAL
+
+    CONVERTIR UN AUTOMATA FINITO A GRAMATICA REGULAR Y VICEVERSA
+
+    @author A00226860 GERARDO CÉSAR JUÁREZ LÓPEZ
+    @author A00354886 ROBERTO JULIO SALDAÑA HERNÁNDEZ
+    @author A00354890 SAÚL DAVID LÓPEZ DELGADO
+------------------------------------------------------------ */
 
 const CANVAS_1 = "#graphCanvas_1";
 const CANVAS_2 = "#graphCanvas_2"
 
 function grammar2Automata() {
 
+    // read values from UI
     let rules = $('#grammar').val().split('\n');
+
+    // instantiate FSA object
     let fsa = new FSA();
     
-
+    // process rules
     rules.forEach(rule => {
         fsa = processRule(fsa, rule.trim())
     });
 
-    let converter = new GrammarAutomataConverter();
-    let graph = converter.dotgraphFromAutomata(fsa)
+    let graph = new GrammarAutomataConverter().dotgraphFromAutomata(fsa);
+    
     drawGraph(graph, CANVAS_1);
 }
 
@@ -24,6 +37,7 @@ function automata2Grammar() {
     let initialState = $("#initialState").val();
     let acceptanceStates = $("#acceptanceStates").val();
     
+    // instantiate FSA object
     let fsa = new FSA();
 
     // 1. Add Acceptance States
@@ -43,6 +57,8 @@ function automata2Grammar() {
     
     let simplifiedFSA = converter.automataFromGrammar(grammar);
     simplifiedFSA.addInitalState(initialState);
+    simplifiedFSA = addAcceptanceStates(simplifiedFSA, acceptanceStates);
+
     let simplifiedGrammar = converter.dotgraphFromAutomata(simplifiedFSA);
     
         
@@ -110,7 +126,6 @@ function drawGrammar(grammar) {
     $("#grammar_2").html(grammar);
 }
 
-
 function createTT() {
 
     // read inputs from UI
@@ -169,32 +184,15 @@ function createTableHeader(language) {
     return header + ("</tr>");
 }
 
-// function createTableBody(language, states, initialState) {        
-
-//     states = removeInitialState(states, initialState);
-
-
-//     // let body = "";
-//     // states.forEach(state => {
-//     //     body += "<tr><th scope='row'>" + state + "</th>";
-//     //     language.forEach(symbol => {
-//     //         body += "<td>" + "<input type='text' width='70px' class='transitions form-control' data-src='" + state + "'" + "data-symbol='" + symbol + "'/>" + "</td>";
-//     //     });
-//     //     body += ("</tr>")   
-//     // });        
-//     // return body;
-//     return "";
-// }
-
 function createTableBody(language, states) {        
     let body = "";
     states.forEach(state => {
         body += "<tr><th scope='row'>" + state + "</th>";
         language.forEach(symbol => {
             if(symbol === EPSILON)
-                body += "<td>" + "<input type='text' width='70px' class='transitions form-control' data-src='" + state + "'" + "data-symbol='epsilon'/>" + "</td>";
+                body += "<td>" + "<input type='text' width='70px' class='transitions form-control' oninput='javascript:automata2Grammar()' data-src='" + state + "'" + "data-symbol='epsilon'/>" + "</td>";
             else
-                body += "<td>" + "<input type='text' width='70px' class='transitions form-control' data-src='" + state + "'" + "data-symbol='" + symbol + "'/>" + "</td>";
+                body += "<td>" + "<input type='text' width='70px' class='transitions form-control' oninput='javascript:automata2Grammar()' data-src='" + state + "'" + "data-symbol='" + symbol + "'/>" + "</td>";
         });
         body += ("</tr>")   
     });        

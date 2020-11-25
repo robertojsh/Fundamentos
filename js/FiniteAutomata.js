@@ -1,7 +1,19 @@
+/* ------------------------------------------------------------
+    FUNDAMENTOS DE LA COMPUTACION
+    PROYECTO FINAL
+
+    CONVERTIR UN AUTOMATA FINITO A GRAMATICA REGULAR Y VICEVERSA
+
+    @author A00226860 GERARDO CÉSAR JUÁREZ LÓPEZ
+    @author A00354886 ROBERTO JULIO SALDAÑA HERNÁNDEZ
+    @author A00354890 SAÚL DAVID LÓPEZ DELGADO
+------------------------------------------------------------ */
+
 const EPSILON = '$';
-const START = 'S';
 const PRODUCES = ' => ';
 const Z_STATE = 'Z';
+const SEPARATOR = ",";
+const RULE_SEPARATOR = " | "
 
 class Edge {
     constructor(source, symbol, destination) {
@@ -16,41 +28,45 @@ class FSA {
       this.transitions = []; // Edges
       this.epsilonTransitions = []; // int
       this.terminalStates = []; // chars
-      this.startSymbol = START;
+      this.startSymbol = "";
+    }
+
+    addInitalState(initialState) {
+        this.startSymbol = initialState;
+    }
+
+    getTransitionsBySrc(src){
+        return this.transitions.filter(x => x.src == src);
     }
 
     addEdge(source, symbol, destination) {
-        let edge = new Edge(source, symbol, destination);
-        this.transitions.push(edge);
+
+        //epsilon o simbolo terminal
+        if (!destination) {
+            if (symbol == EPSILON){
+                this.terminalStates.push(source);
+            }else {
+                this.addEdgeInternal(source, symbol, Z_STATE);
+                this.terminalStates.push(Z_STATE);
+            }
+
+        } else
+            this.addEdgeInternal(source, symbol, destination);
 
         if (symbol === EPSILON) {
             this.epsilonTransitions.push(this.transitions.length - 1);
         }
     }
 
+    addEdgeInternal(source, symbol, destination){
+        let edge = new Edge(source, symbol, destination);
+        this.transitions.push(edge);
+    }
+
     hasTerminal(state) {
         return this.terminalStates.includes(state);
     }
 
-    replaceEpsilonTransitions() {
-        // TODO: 
-        for (let index of this.epsilonTransitions) {
-            let srcEpsEdge = this.transitions[index].src;
-            let destEpsEdge = this.transitions[index].dest;
-            for (let edge of this.transitions) {
-                //if (edge.src.name === )
-            }
-        }
-        for (let index of this.epsilonTransitions) {
-            delete this.transitions[index]
-        }
-        this.transitions = this.transitions
-            .filter(edge => edge !== undefined)
-    }
-
-    automataFromInputData() {
-        // TODO:
-    }
 }
 
 class Grammar {
@@ -66,14 +82,18 @@ class Grammar {
     }
 
     prodHasEpsilon(nonTerminal) {
-        return this.rules[nonTerminal].includes(EPSILON);
+        return this.hasProduction(nonTerminal,EPSILON)
+    }
+
+    hasProduction(nonTerminal,production){
+        return this.rules[nonTerminal] && this.rules[nonTerminal].includes(production);
     }
 
     toString() {
         let grammar = "";
         for (let key in this.rules) {
             grammar = grammar.concat(
-                key, PRODUCES, this.rules[key].join('|'), '\n'
+                key, PRODUCES, this.rules[key].join(RULE_SEPARATOR), '\n'
             );
         }
 
@@ -103,7 +123,6 @@ class Grammar {
                 }
             }
         }
-
         return true;
     }
 }
@@ -116,7 +135,24 @@ class GrammarAutomataConverter {
 
         for (let edge of fsa.transitions) {
             let production = edge.symbol + edge.dest;
-            grammar.addProduction(edge.src, production);
+
+            //avoids epsilon transitions
+            if (edge.symbol === EPSILON) {
+                let subTransitions = fsa.getTransitionsBySrc(edge.dest);
+                subTransitions.forEach(item => {
+                    if (item.symbol != EPSILON
+                        && !grammar.hasProduction(edge.src,item.symbol + item.dest)) {
+                        grammar.addProduction(edge.src, item.symbol + item.dest);
+                    }
+
+                    if (fsa.hasTerminal(item.dest) && !grammar.prodHasEpsilon(edge.src)) {
+                        grammar.addProduction(edge.src, EPSILON);
+                    }
+                });
+            } else if (!grammar.hasProduction(edge.src,production)){
+                grammar.addProduction(edge.src, production);
+            }
+
             if (fsa.hasTerminal(edge.src) && !grammar.prodHasEpsilon(edge.src)) {
                 grammar.addProduction(edge.src, EPSILON);
             }
@@ -146,7 +182,7 @@ class GrammarAutomataConverter {
     }
 
     dotgraphFromAutomata(fsa) {
-        let dotgraph = 'digraph{\n'
+        let dotgraph = 'digraph { rankdir=LR \n'
         for (let edge of fsa.transitions) {
             dotgraph = dotgraph.concat(
                 edge.src,'->',edge.dest,'[label="', edge.symbol, '"];\n'
