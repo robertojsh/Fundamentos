@@ -21,13 +21,40 @@ class FSA {
       this.startSymbol = START;
     }
 
+
+    setInitialState(value){
+        this.startSymbol = value;
+    }
+
+    getTransitionsBySrc(src){
+        return this.transitions.filter(x => x.src == src);
+    }
+
     addEdge(source, symbol, destination) {
-        let edge = new Edge(source, symbol, destination);
-        this.transitions.push(edge);
+
+
+        //entonces es epsilon o simbolo terminal
+        if (!destination) {
+            if (symbol == EPSILON)
+                this.terminalStates.push(source);
+            else {
+                this.addEdgeInternal(source, symbol, Z_STATE);
+                this.terminalStates.push(Z_STATE);
+            }
+
+        } else
+            this.addEdgeInternal(source, symbol, destination);
+
+
 
         if (symbol === EPSILON) {
             this.epsilonTransitions.push(this.transitions.length - 1);
         }
+    }
+
+    addEdgeInternal(source, symbol, destination){
+        let edge = new Edge(source, symbol, destination);
+        this.transitions.push(edge);
     }
 
     hasTerminal(state) {
@@ -68,7 +95,12 @@ class Grammar {
     }
 
     prodHasEpsilon(nonTerminal) {
-        return this.rules[nonTerminal].includes(EPSILON);
+        //return this.rules[nonTerminal].includes(EPSILON);
+        return this.hasProduction(nonTerminal,EPSILON)
+    }
+
+    hasProduction(nonTerminal,production){
+        return this.rules[nonTerminal] && this.rules[nonTerminal].includes(production);
     }
 
     toString() {
@@ -118,7 +150,24 @@ class GrammarAutomataConverter {
 
         for (let edge of fsa.transitions) {
             let production = edge.symbol + edge.dest;
-            grammar.addProduction(edge.src, production);
+
+            //avoids epsilon transitions
+            if (edge.symbol === EPSILON) {
+                let subTransitions = fsa.getTransitionsBySrc(edge.dest);
+                subTransitions.forEach(item => {
+                    if (item.symbol != EPSILON
+                        && !grammar.hasProduction(edge.src,item.symbol + item.dest)) {
+                        grammar.addProduction(edge.src, item.symbol + item.dest);
+                    }
+
+                    if (fsa.hasTerminal(item.dest) && !grammar.prodHasEpsilon(edge.src)) {
+                        grammar.addProduction(edge.src, EPSILON);
+                    }
+                });
+            } else if (!grammar.hasProduction(edge.src,production)){
+                grammar.addProduction(edge.src, production);
+            }
+
             if (fsa.hasTerminal(edge.src) && !grammar.prodHasEpsilon(edge.src)) {
                 grammar.addProduction(edge.src, EPSILON);
             }

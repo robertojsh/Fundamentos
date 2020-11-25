@@ -16,6 +16,7 @@ function grammar2Automata() {
 
     let rules = $('#grammar').val().split('\n');
     let fsa = new FSA();
+    
 
     rules.forEach(rule => {
         fsa = processRule(fsa, rule.trim())
@@ -48,8 +49,12 @@ function automata2Grammar() {
 
     // 5. get Grammar (convert fsa objet to grammar rules)
     let grammar = converter.grammarFromAutomata(fsa);
+    
+    let simplifiedFSA = converter.automataFromGrammar(grammar);
+    let simplifiedGrammar = converter.dotgraphFromAutomata(simplifiedFSA);
+    
         
-    drawGraph(graph, CANVAS_2);
+    drawGraph(simplifiedGrammar, CANVAS_2);
     drawGrammar(grammar.toString());
 }
 
@@ -71,6 +76,7 @@ function processRule(fsa, rule) {
     part.forEach(element => {
         let symbol = element[0];
         let dest = element[1];
+
         fsa.addEdge(src, symbol, dest);    
     });
     return fsa;
@@ -87,10 +93,16 @@ function addAcceptanceStates(fsa, acceptanceStates) {
 function addTransitions(fsa, transitions) {
     transitions.each(function () {
         let src    = $(this).attr('data-src');
-        let symbol = $(this).attr('data-symbol');;
-        let dest   = $(this).val();
-
-        fsa.addEdge(src, symbol, dest);
+        let symbol = $(this).attr('data-symbol');
+        if(symbol === 'epsilon')
+            symbol = EPSILON
+        let dests   = $(this).val();
+        let destinations = dests.split(",");
+        for (let dest of destinations) {
+            if (dest !== "") {
+                fsa.addEdge(src, symbol, dest);
+            }
+        }
     });
 
     return fsa;
@@ -154,7 +166,10 @@ function createTableBody(language, states) {
     states.forEach(state => {
         body += "<tr><th scope='row'>" + state + "</th>";
         language.forEach(symbol => {
-            body += "<td>" + "<input type='text' width='70px' class='transitions form-control' data-src='" + state + "'" + "data-symbol='" + symbol + "'/>" + "</td>";
+            if(symbol === EPSILON)
+                body += "<td>" + "<input type='text' width='70px' class='transitions form-control' data-src='" + state + "'" + "data-symbol='epsilon'/>" + "</td>";
+            else
+                body += "<td>" + "<input type='text' width='70px' class='transitions form-control' data-src='" + state + "'" + "data-symbol='" + symbol + "'/>" + "</td>";
         });
         body += ("</tr>")   
     });        
