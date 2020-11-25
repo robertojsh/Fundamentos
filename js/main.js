@@ -106,16 +106,28 @@ function addTransitions(fsa, transitions) {
         let symbol = $(this).attr('data-symbol');
         if(symbol === 'epsilon')
             symbol = EPSILON
+
         let dests   = $(this).val();
         let destinations = dests.split(",");
+
         for (let dest of destinations) {
-            if (dest !== "") {
-                fsa.addEdge(src, symbol, dest);
+            if (dest !== "" ) {
+                if (isValidDest(dest)) {
+                    fsa.addEdge(src, symbol, dest);
+                } else {
+                    alert("Estado invalido");
+                    return null;
+                }                
             }
         }
     });
-
     return fsa;
+}
+
+function isValidDest(dest) {
+    let st = $("#iStates").val().trim();
+    let idx = st.indexOf(dest);
+    return idx >= 0     
 }
 
 function drawGraph(graph, canvas) {
@@ -154,6 +166,8 @@ function createTT() {
         // draw table to UI
         $("#tableContainer").html(template);
         $("#draw-automata").show();
+
+        automata2Grammar();
 
     } else {
         alert("verify yout inputs");
